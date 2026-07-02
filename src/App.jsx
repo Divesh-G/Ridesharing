@@ -4,6 +4,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
+import History from './pages/History'
 import RiderDashboard from './pages/rider/RiderDashboard'
 import DriverDashboard from './pages/driver/DriverDashboard'
 
@@ -26,6 +27,14 @@ function App() {
           element={
             <ProtectedRoute>
               <DriverDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <History />
             </ProtectedRoute>
           }
         />

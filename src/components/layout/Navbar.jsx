@@ -5,6 +5,7 @@ const links = [
   { to: '/', label: 'Home' },
   { to: '/rider', label: 'Rider' },
   { to: '/driver', label: 'Driver' },
+  { to: '/history', label: 'History' },
 ]
 
 function Navbar() {

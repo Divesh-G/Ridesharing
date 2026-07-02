@@ -23,10 +23,11 @@ function areEqual(prev, next) {
   )
 }
 
-// Presentational map: does not know about Firebase. Pass a live driverLocation
-// prop (e.g. from useDriverLocation) to move the driver marker in real time.
-// Memoized on lat/lng values (not object identity) since Firebase snapshots
-// produce a new object per update even when coordinates are unchanged.
+// Presentational map: does not know about the ride store. Pass a live
+// driverLocation prop (e.g. from useDriverLocation) to move the driver
+// marker in real time. Memoized on lat/lng values (not object identity)
+// since each store update produces a new object even when coordinates
+// are unchanged.
 function RideMap({
   riderLocation,
   driverLocation,

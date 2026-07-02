@@ -13,7 +13,7 @@ import {
 // with an InvalidTransitionError in `error` instead of corrupting state.
 //
 // Pass `onTransition` to run a side effect (e.g. persisting the new status
-// to Firebase) after a successful transition.
+// to the ride store) after a successful transition.
 export function useRideState(initialState = RIDE_STATES.IDLE, { onTransition } = {}) {
   const [state, setState] = useState(initialState)
   const [error, setError] = useState(null)

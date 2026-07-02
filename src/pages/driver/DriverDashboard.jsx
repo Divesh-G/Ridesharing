@@ -1,17 +1,20 @@
 import { useState } from 'react'
+import Button from '../../components/common/Button'
 import LiveRideMap from '../../components/map/LiveRideMap'
-import FirebaseSetupNotice from '../../components/common/FirebaseSetupNotice'
-import {
-  DEMO_DRIVER_START_LOCATION,
-  DEMO_PICKUP_LOCATION,
-  DEMO_RIDE_ID,
-} from '../../utils/constants'
-import { useDriverSimulator } from '../../hooks/useDriverSimulator'
+import ActiveRideCard from '../../components/ride/ActiveRideCard'
+import RideRequestCard from '../../components/ride/RideRequestCard'
+import { useAuth } from '../../hooks/useAuth'
+import { useDriverRide } from '../../hooks/useDriverRide'
+import { useIncomingRideRequests } from '../../hooks/useIncomingRideRequests'
 
 function DriverDashboard() {
+  const { user } = useAuth()
   const [online, setOnline] = useState(false)
 
-  useDriverSimulator(DEMO_RIDE_ID, online, DEMO_DRIVER_START_LOCATION)
+  const { rideId, ride, error, acceptRide, rejectRide, startArriving, startTrip, completeTrip } =
+    useDriverRide(user?.email)
+
+  const requests = useIncomingRideRequests(online && !rideId)
 
   const stats = [
     { label: 'Status', value: online ? 'Online' : 'Offline' },
@@ -29,13 +32,16 @@ function DriverDashboard() {
             earnings.
           </p>
         </div>
-        <button
-          onClick={() => setOnline((value) => !value)}
-          className="rounded-full border border-gray-200 bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:-translate-y-0.5 hover:border-gray-300 hover:bg-gray-50"
-        >
+        <Button variant="secondary" onClick={() => setOnline((value) => !value)}>
           {online ? 'Go Offline' : 'Go Online'}
-        </button>
+        </Button>
       </div>
+
+      {error && (
+        <p className="mt-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">
+          {error.message}
+        </p>
+      )}
 
       <div className="mt-8 grid gap-6 sm:grid-cols-3">
         {stats.map((stat) => (
@@ -51,13 +57,39 @@ function DriverDashboard() {
         ))}
       </div>
 
-      <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="h-96 w-full">
-          <LiveRideMap rideId={DEMO_RIDE_ID} riderLocation={DEMO_PICKUP_LOCATION} />
-        </div>
+      <div className="mt-8 space-y-4">
+        {ride ? (
+          <ActiveRideCard
+            ride={ride}
+            onStartArriving={startArriving}
+            onStartTrip={startTrip}
+            onCompleteTrip={completeTrip}
+          />
+        ) : !online ? (
+          <p className="rounded-2xl border border-dashed border-gray-300 bg-white p-6 text-center text-sm text-gray-500">
+            Go online to start receiving ride requests.
+          </p>
+        ) : requests.length > 0 ? (
+          requests.map((request) => (
+            <RideRequestCard
+              key={request.id}
+              request={request}
+              onAccept={acceptRide}
+              onReject={rejectRide}
+            />
+          ))
+        ) : (
+          <p className="rounded-2xl border border-dashed border-gray-300 bg-white p-6 text-center text-sm text-gray-500">
+            No incoming ride requests yet.
+          </p>
+        )}
       </div>
 
-      <FirebaseSetupNotice />
+      <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="h-96 w-full">
+          <LiveRideMap rideId={rideId} riderLocation={ride?.pickup} />
+        </div>
+      </div>
     </section>
   )
 }

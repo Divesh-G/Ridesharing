@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { subscribeToRide } from '../firebase/rideService'
+import { subscribeToRide } from '../services/rideService'
 
 function isSameLocation(a, b) {
   if (a === b) return true

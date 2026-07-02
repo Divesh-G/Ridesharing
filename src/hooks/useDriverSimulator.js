@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { updateRideLocation } from '../firebase/rideService'
+import { updateRideLocation } from '../services/rideService'
 
-const STEP = 0.0015 // roughly 150m per tick
-const TICK_MS = 2000
+const STEP = 0.0004 // roughly a believable per-second urban driving jitter
+const TICK_MS = 1000
 
 function step(location) {
   return {
@@ -11,16 +11,24 @@ function step(location) {
   }
 }
 
-// Simulates a driver's device pushing live GPS updates to Firebase, since
-// there is no real driver app yet. Pushes an update immediately and then on
-// a fixed interval while `active` is true.
+// Simulates a driver device pushing live GPS updates to the ride store once a
+// second, since there's no real GPS source yet. Restarts from `startLocation`
+// whenever `rideId` changes (a new ride shouldn't continue from wherever the
+// last one ended), and always clears its interval on cleanup so no stray
+// timer keeps writing after a ride ends, the driver goes offline, or the
+// component unmounts.
 export function useDriverSimulator(rideId, active, startLocation) {
   const locationRef = useRef(startLocation)
+  const lastRideIdRef = useRef(rideId)
+
+  if (lastRideIdRef.current !== rideId) {
+    lastRideIdRef.current = rideId
+    locationRef.current = startLocation
+  }
 
   useEffect(() => {
     if (!active || !rideId) return undefined
 
-    locationRef.current = locationRef.current ?? startLocation
     updateRideLocation(rideId, locationRef.current)
 
     const interval = setInterval(() => {
@@ -30,4 +38,6 @@ export function useDriverSimulator(rideId, active, startLocation) {
 
     return () => clearInterval(interval)
   }, [active, rideId])
+
+  return locationRef
 }

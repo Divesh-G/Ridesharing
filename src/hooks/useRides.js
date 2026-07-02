@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { subscribeToRides } from '../firebase/rideService'
+import { subscribeToRides } from '../services/rideService'
 
 // Subscribes to the full rides collection and keeps it in sync in real time.
 export function useRides() {

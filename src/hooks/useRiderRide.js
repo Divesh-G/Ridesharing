@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRide } from './useRide'
-import { createRide, updateRideStatus } from '../firebase/rideService'
+import { createRide, updateRideStatus } from '../services/rideService'
 import { canRiderCancel, validateRideRequest } from '../state/rideValidation'
 import {
   RIDE_ACTORS,
@@ -27,7 +27,7 @@ function storeRideId(riderId, rideId) {
 // Owns the rider-facing ride lifecycle end to end: requesting a ride,
 // letting the (simulated) dispatch system move it into SEARCHING, tracking
 // it in real time, and cancelling it. All state changes go through
-// rideStateMachine/rideValidation rather than writing Firebase statuses
+// rideStateMachine/rideValidation rather than writing store statuses
 // directly, so UI components never need to know which transitions are legal.
 export function useRiderRide(riderId) {
   const [rideId, setRideId] = useState(() => getStoredRideId(riderId))
@@ -77,11 +77,6 @@ export function useRiderRide(riderId) {
         pickup,
         dropoff,
       })
-
-      if (!newRideId) {
-        setError(new Error('Ride requests require Firebase to be configured.'))
-        return false
-      }
 
       setRideId(newRideId)
       return true

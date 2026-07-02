@@ -1,5 +1,4 @@
 import Button from '../../components/common/Button'
-import FirebaseSetupNotice from '../../components/common/FirebaseSetupNotice'
 import LiveRideMap from '../../components/map/LiveRideMap'
 import RideStatusBadge from '../../components/ride/RideStatusBadge'
 import { useAuth } from '../../hooks/useAuth'
@@ -71,8 +70,6 @@ function RiderDashboard() {
           />
         </div>
       </div>
-
-      <FirebaseSetupNotice />
     </section>
   )
 }

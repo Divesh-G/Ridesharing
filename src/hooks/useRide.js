@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { subscribeToRide } from '../firebase/rideService'
+import { subscribeToRide } from '../services/rideService'
 
 // Subscribes to a single ride by id and keeps it in sync in real time.
 export function useRide(rideId) {
