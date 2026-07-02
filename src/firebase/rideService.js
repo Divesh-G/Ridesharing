@@ -42,13 +42,15 @@ export async function createRide({
   rider,
   driver = null,
   status = RIDE_STATES.REQUESTING,
+  pickup,
+  dropoff,
   location,
 }) {
   const ridesRef = getRidesRef()
   if (!ridesRef) return null
 
   const newRideRef = push(ridesRef)
-  await set(newRideRef, { rider, driver, status, location })
+  await set(newRideRef, { rider, driver, status, pickup, dropoff, location })
   return newRideRef.key
 }
 
