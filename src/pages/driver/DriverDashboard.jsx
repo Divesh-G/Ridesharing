@@ -1,10 +1,24 @@
-const stats = [
-  { label: 'Status', value: 'Offline' },
-  { label: 'Rides Today', value: '0' },
-  { label: 'Today’s Earnings', value: '$0.00' },
-]
+import { useState } from 'react'
+import LiveRideMap from '../../components/map/LiveRideMap'
+import FirebaseSetupNotice from '../../components/common/FirebaseSetupNotice'
+import {
+  DEMO_DRIVER_START_LOCATION,
+  DEMO_PICKUP_LOCATION,
+  DEMO_RIDE_ID,
+} from '../../utils/constants'
+import { useDriverSimulator } from '../../hooks/useDriverSimulator'
 
 function DriverDashboard() {
+  const [online, setOnline] = useState(false)
+
+  useDriverSimulator(DEMO_RIDE_ID, online, DEMO_DRIVER_START_LOCATION)
+
+  const stats = [
+    { label: 'Status', value: online ? 'Online' : 'Offline' },
+    { label: 'Rides Today', value: '0' },
+    { label: 'Today’s Earnings', value: 'Rs. 0.00' },
+  ]
+
   return (
     <section className="w-full px-8 py-12">
       <div className="flex items-center justify-between">
@@ -15,8 +29,11 @@ function DriverDashboard() {
             earnings.
           </p>
         </div>
-        <button className="rounded-full border border-gray-200 bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:-translate-y-0.5 hover:border-gray-300 hover:bg-gray-50">
-          Go Online
+        <button
+          onClick={() => setOnline((value) => !value)}
+          className="rounded-full border border-gray-200 bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:-translate-y-0.5 hover:border-gray-300 hover:bg-gray-50"
+        >
+          {online ? 'Go Offline' : 'Go Online'}
         </button>
       </div>
 
@@ -33,6 +50,14 @@ function DriverDashboard() {
           </div>
         ))}
       </div>
+
+      <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="h-96 w-full">
+          <LiveRideMap rideId={DEMO_RIDE_ID} riderLocation={DEMO_PICKUP_LOCATION} />
+        </div>
+      </div>
+
+      <FirebaseSetupNotice />
     </section>
   )
 }

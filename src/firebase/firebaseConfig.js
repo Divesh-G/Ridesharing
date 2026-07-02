@@ -11,6 +11,20 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const app = initializeApp(firebaseConfig)
+// getDatabase() throws synchronously if databaseURL/projectId are missing,
+// which would crash the whole app before it can render. No Firebase project
+// exists yet, so real-time features stay disabled until VITE_FIREBASE_* env
+// vars are set (see .env.example) instead of taking the app down.
+export const isFirebaseConfigured = Boolean(
+  firebaseConfig.databaseURL && firebaseConfig.projectId,
+)
 
-export const database = getDatabase(app)
+if (!isFirebaseConfigured) {
+  console.warn(
+    '[firebase] Missing VITE_FIREBASE_* env vars — real-time features (live map, ride sync) are disabled. Copy .env.example to .env and fill in your Firebase project credentials.',
+  )
+}
+
+const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null
+
+export const database = app ? getDatabase(app) : null

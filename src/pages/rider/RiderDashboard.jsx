@@ -1,7 +1,11 @@
+import LiveRideMap from '../../components/map/LiveRideMap'
+import FirebaseSetupNotice from '../../components/common/FirebaseSetupNotice'
+import { DEMO_PICKUP_LOCATION, DEMO_RIDE_ID } from '../../utils/constants'
+
 const stats = [
   { label: 'Active Ride', value: 'None' },
   { label: 'Completed Rides', value: '0' },
-  { label: 'Total Spent', value: '$0.00' },
+  { label: 'Total Spent', value: 'Rs. 0.00' },
 ]
 
 function RiderDashboard() {
@@ -32,6 +36,14 @@ function RiderDashboard() {
           </div>
         ))}
       </div>
+
+      <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="h-96 w-full">
+          <LiveRideMap rideId={DEMO_RIDE_ID} riderLocation={DEMO_PICKUP_LOCATION} />
+        </div>
+      </div>
+
+      <FirebaseSetupNotice />
     </section>
   )
 }
