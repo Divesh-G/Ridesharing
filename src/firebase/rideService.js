@@ -1,5 +1,6 @@
 import { ref, onValue, off, push, set, update } from 'firebase/database'
 import { database } from './firebaseConfig'
+import { RIDE_STATES } from '../state/rideStateMachine'
 
 export function getRideRef(rideId) {
   return database ? ref(database, `rides/${rideId}`) : null
@@ -37,7 +38,12 @@ export function subscribeToRides(callback) {
   return () => off(ridesRef, 'value', handleValue)
 }
 
-export async function createRide({ rider, driver = null, status = 'requested', location }) {
+export async function createRide({
+  rider,
+  driver = null,
+  status = RIDE_STATES.REQUESTING,
+  location,
+}) {
   const ridesRef = getRidesRef()
   if (!ridesRef) return null
 
@@ -58,5 +64,5 @@ export function updateRideLocation(rideId, location) {
 
 export function assignDriver(rideId, driver) {
   const rideRef = getRideRef(rideId)
-  return rideRef ? update(rideRef, { driver, status: 'matched' }) : Promise.resolve()
+  return rideRef ? update(rideRef, { driver, status: RIDE_STATES.ACCEPTED }) : Promise.resolve()
 }
